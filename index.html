@@ -1,40 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Your Name | Personal Homepage</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Xiaoyao Huang | Researcher</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 60px auto;
-      line-height: 1.6;
-    }
-    h1 { margin-bottom: 0; }
-    .subtitle { color: #666; }
+    :root { --maxw: 980px; --muted:#666; --line:#eaeaea; }
+    body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; margin:0; color:#111; }
+    .wrap { max-width: var(--maxw); margin: 40px auto; padding: 0 18px; }
+    header { display:flex; gap:18px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    h1 { margin:0; font-size: 28px; }
+    .role { color: var(--muted); margin-top:6px; }
+    nav a { margin-right: 14px; text-decoration:none; color:#111; border-bottom:1px solid transparent; }
+    nav a:hover { border-bottom-color:#111; }
+    section { margin-top: 34px; }
+    h2 { font-size: 18px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+    .pill { display:inline-block; border:1px solid var(--line); padding:4px 10px; border-radius:999px; margin:6px 8px 0 0; font-size: 13px; color:#222; }
+    .pub { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .pub-title { font-weight: 600; }
+    .pub-meta { color: var(--muted); margin-top:4px; }
+    .pub-links a { font-size: 13px; margin-right: 10px; }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin: 10px 0 14px; }
+    input, select { padding: 8px 10px; border:1px solid var(--line); border-radius: 10px; }
+    footer { margin: 40px 0 10px; color: var(--muted); font-size: 13px; }
+    .note { color: var(--muted); font-size: 13px; }
   </style>
 </head>
 <body>
-  <h1>Your Name</h1>
-  <p class="subtitle">Postdoctoral Researcher</p>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Xiaoyao Huang</h1>
+        <div class="role">Researcher, China Telecom Cloud Computing Research Institute</div>
+        <div class="note">
+          Managing publications & full-texts (where permitted). Updated: <span id="updated"></span>
+        </div>
+      </div>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#publications">Publications</a>
+        <a href="#talks">Talks</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-  <h2>About Me</h2>
-  <p>
-    I am a postdoctoral researcher working on computing networks,
-    cloud-edge collaboration, and AI systems.
-  </p>
+    <section id="about">
+      <h2>About</h2>
+      <p>
+        I am a researcher at China Telecom Cloud Computing Research Institute. My work focuses on
+        networking & distributed systems for intelligent computing infrastructures.
+      </p>
+      <div>
+        <span class="pill">Computing Networks</span>
+        <span class="pill">Cloud-Edge Collaboration</span>
+        <span class="pill">Scheduling & Orchestration</span>
+        <span class="pill">AI for Systems</span>
+      </div>
+    </section>
 
-  <h2>Research Interests</h2>
-  <ul>
-    <li>Computing Power Networks</li>
-    <li>Cloud-Edge-End Collaboration</li>
-    <li>RAG-LLM Systems</li>
-  </ul>
+    <section id="publications">
+      <h2>Publications</h2>
 
-  <h2>Contact</h2>
-  <p>
-    Email: yourname [at] example.com<br>
-    GitHub: https://github.com/yourname
-  </p>
+      <div class="controls">
+        <input id="q" placeholder="Search title / venue / keywords…" size="30"/>
+        <select id="year"></select>
+        <select id="type">
+          <option value="">All types</option>
+          <option value="conference">Conference</option>
+          <option value="journal">Journal</option>
+          <option value="workshop">Workshop</option>
+          <option value="preprint">Preprint</option>
+        </select>
+      </div>
+
+      <div id="pubs"></div>
+      <p class="note">
+        Full list on
+        <a href="https://scholar.google.com/citations?user=b0qiV4QAAAAJ&hl=en&oi=ao" target="_blank" rel="noreferrer">Google Scholar</a>.
+      </p>
+    </section>
+
+    <section id="talks">
+      <h2>Talks</h2>
+      <ul>
+        <li>(Optional) Add invited talks, conference presentations, posters…</li>
+      </ul>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>
+        Email: <b>yourname [at] example.com</b><br/>
+        GitHub: <a href="https://github.com/xiaoyaosweet" target="_blank" rel="noreferrer">xiaoyaosweet</a>
+      </p>
+    </section>
+
+    <footer>© <span id="y"></span> Xiaoyao Huang</footer>
+  </div>
+
+  <script>
+    const $ = (id)=>document.getElementById(id);
+    const pubsEl = $("pubs");
+
+    function render(list){
+      pubsEl.innerHTML = list.map(p => `
+        <div class="pub">
+          <div class="pub-title">${p.title}</div>
+          <div class="pub-meta">
+            ${p.authors} — <i>${p.venue || ""}</i> ${p.year ? `(${p.year})` : ""}
+          </div>
+          <div class="pub-links">
+            ${p.pdf ? `<a href="${p.pdf}" target="_blank">PDF</a>` : ``}
+            ${p.doi ? `<a href="https://doi.org/${p.doi}" target="_blank">DOI</a>` : ``}
+            ${p.arxiv ? `<a href="https://arxiv.org/abs/${p.arxiv}" target="_blank">arXiv</a>` : ``}
+            ${p.bib ? `<a href="${p.bib}" target="_blank">BibTeX</a>` : ``}
+            ${p.code ? `<a href="${p.code}" target="_blank">Code</a>` : ``}
+            ${p.slides ? `<a href="${p.slides}" target="_blank">Slides</a>` : ``}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function uniqYears(pubs){
+      const ys = Array.from(new Set(pubs.map(p=>p.year).filter(Boolean))).sort((a,b)=>b-a);
+      return ["", ...ys];
+    }
+
+    function applyFilters(all){
+      const q = $("q").value.trim().toLowerCase();
+      const y = $("year").value;
+      const t = $("type").value;
+      return all.filter(p=>{
+        if (y && String(p.year) !== y) return false;
+        if (t && p.type !== t) return false;
+        if (!q) return true;
+        const hay = `${p.title} ${p.venue||""} ${p.keywords||""} ${p.authors||""}`.toLowerCase();
+        return hay.includes(q);
+      });
+    }
+
+    async function main(){
+      const res = await fetch("publications.json");
+      const all = await res.json();
+
+      const years = uniqYears(all);
+      $("year").innerHTML = years.map(v=>`<option value="${v}">${v===""?"All years":v}</option>`).join("");
+
+      const update = ()=>render(applyFilters(all));
+      $("q").addEventListener("input", update);
+      $("year").addEventListener("change", update);
+      $("type").addEventListener("change", update);
+
+      update();
+    }
+
+    $("y").textContent = new Date().getFullYear();
+    $("updated").textContent = new Date().toISOString().slice(0,10);
+    main();
+  </script>
 </body>
 </html>
